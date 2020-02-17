@@ -45,7 +45,7 @@ with open(args.vcf) as vcf:
 			totalDP = tmp['DP'][i] # i-th sample's total depth
 			ADs = tmp['AD'][i].split(",") # i-th sample's allele depth
 			for j, a in enumerate(alts):
-				ad = int(ADs[j])
+				ad = int(ADs[j+1])
 				af = float(ad) / float(totalDP)
 				if args.as_percent:
 					af = 100 * af
