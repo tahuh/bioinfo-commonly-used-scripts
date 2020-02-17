@@ -25,7 +25,7 @@ def calculate_pe_molecule_size_exact(read1, read2):
 	if cigar_right[-1][0] == 4 or cigar_right[-1][0] == 5:
 		right_soft_or_hard_clip += cigar_right[-1][1]
 	left_start = left.reference_start
-	right_start = right_reference_start
+	right_start = right.reference_start
 	size = right_start - left_start + 1
 	qstart = read2.query_alignment_start
 	qend = read2.query_alignment_end
