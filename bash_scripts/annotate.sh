@@ -7,21 +7,22 @@
 #
 #######################################
 
-snpeff=/path/to/snpEff.jar
-snpsift=/path/to/SnpSift.jar
-gnomad=/path/to/gnomad.vcf.gz
-dbsnp=/path/to/dbsnp.vcf.gz
-cosmic=/path/to/cosmic_coding_muts.vcf.gz
+snpeff=/synbiodata/thomas/tools/snpEff/snpEff.jar
+snpsift=/synbiodata/thomas/tools/snpEff/SnpSift.jar
+gnomad=/synbiodata/thomas/AlphaLiquid/bundle/resources/reference/gatk_bundle/af-only-gnomad.hg38.vcf.gz
+dbsnp=/synbiodata/thomas/AlphaLiquid/bundle/resources/reference/gatk_bundle/dbsnp_146.hg38.vcf.gz
+cosmic=/synbiodata/reference/cosmic/v90/CosmicCodingMuts_v90_chradd.vcf.gz
 
 ## VCF filename
 VCF=$1
 PREFIX=`basename -s ".vcf" ${VCF}`
+DIRNAME=`dirname ${VCF}`
 ANN=${PREFIX}.snpeff.vcf
-DBSNP_ANNO=${PREFIX}.dnsnp.vcf
+DBSNP_ANNO=${PREFIX}.dbsnp.vcf
 COSMIC_ANNO=${PREFIX}.dbsnp.cosmic.vcf
 GNOMAD_ANNO=${PREFIX}.dbsnp.cosmic.gnomad.vcf
-
-java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpeff} -noInteraction -noMotif -hgvs1LetterAa hg38 ${VCF} > ${ANN}
-java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpsift} annotate -v ${dbsnp} ${ANN} > ${DBSNP_ANNO}
-java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpsift} annotate -v ${cosmic} ${DBSNP_ANNO} > ${COSMIC_ANNO}
-java -Xmx4G -Djava.io.tmpdor=/tmp -jar ${snpsift} annotate -name GNOMAD_ -info AF,AC ${gnomad} ${COSMIC_ANNO} > ${GNOMAD_ANNO}
+#bcftools sort -o ${DIRNAME}/${PREFIX}.sorted.vcf ${VCF}
+java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpeff} -noInteraction -noMotif hg38 ${VCF} > ${DIRNAME}/${ANN}
+java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpsift} annotate -v ${dbsnp} ${DIRNAME}/${ANN} > ${DIRNAME}/${DBSNP_ANNO}
+java -Xmx4G -Djava.io.tmpdir=/tmp -jar ${snpsift} annotate -v ${cosmic} ${DIRNAME}/${DBSNP_ANNO} > ${DIRNAME}/${COSMIC_ANNO}
+java -Xmx4G -Djava.io.tmpdor=/tmp -jar ${snpsift} annotate -name GNOMAD_ -info AF,AC ${gnomad} ${DIRNAME}/${COSMIC_ANNO} > ${DIRNAME}/${GNOMAD_ANNO}
