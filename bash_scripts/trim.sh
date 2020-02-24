@@ -26,11 +26,52 @@ while getopts "f:F:o:O:" opt ; do
 	esac
 done
 
+FASTP_EXE=`which fastp`
+
+if [[ $FASTQ1 == "" ]]
+then
+	usage
+	echo "fastq file for read1 (-f) required"
+	exit 1
+fi
+
+if [[ $FASTQ2 == "" ]]
+then
+	usage
+	echo "fastq file for read2 (-F) required"
+	exit 1
+fi
+
+if [[ $OUT1 == "" ]]
+then
+	usage
+	echo "outfile for read1 (-o) required"
+	exit 1
+fi
+
+if [[ $OUT2 == "" ]]
+then
+	usage
+	echo "outfile for reads2 (-O) required"
+	exit 1
+fi
+
+if [[ $FASTP_EXE == "" ]]
+then
+	echo "FASTP is not installed on system, Please tell your administrator to install it"
+	exit 1
+else
+	echo "Using system installed fastp at ", ${FASTP_EXE}
+fi
+
 fastp \
 -i ${FASTQ1} \
 -I ${FASTQ2} \
 -o ${OUT1} \
 -O ${OUT2} \
+-h ${OUT1}.html \
+-j ${OUT1}.json \
 -q 20 -u 20 -x -y -3 -p -g -t 1 -T 1 \
 --adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC \
 --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
