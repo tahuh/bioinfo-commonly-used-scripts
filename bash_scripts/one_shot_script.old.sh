@@ -83,27 +83,29 @@ fastp \
 -w ${THREADS}
 
 echo "Start Alignment at : " , `date`
-bwa mem -M -t ${THREADS} ${REF} ${ODIR}/trimmed/${s}_R1.fq.gz ${ODIR}/trimmed/${s}_R2.fq.gz | \
-samtools view -bhT ${REF} | \
-${gatk}/gatk --java-options "-Xmx4G -XX:ParallelGCThreads=4 -Djava.io.tmpdir=${ODIR}/gatk_tmp" \
-AddOrReplaceReadGroups \
--I /dev/stdin \
--O /dev/stdout \
-RGID=${s} \
-RGLB=${s} \
-RGPL=ILLUMINA \
-RGPU=SomePlatFormUnit \
-RGSM=${s} \
-RGCN=SomeSequencingCenter \
-RGPM=SomeSequencingMachineName | \
-${gatk}/gatk --java-options "-Xmx4G -XX:ParallelGCThreads=4 -Djava.io.tmpdir=${ODIR}/gatk_tmp" \
-SortSam \
--I /dev/stdin \
--O ${ODIR}/bam/${s}.bam \
--SO coordinate
+bwa mem -M -t ${THREADS} ${REF} ${ODIR}/trimmed/${s}_R1.fq.gz ${ODIR}/trimmed/${s}_R2.fq.gz | samtools view -bhT ${REF} | samtools sort -o ${ODIR}/bam/${s}.tmp.bam
+samtools index ${ODIR}/${bam}/${s}.tmp.bam
 
-sample=${s}
+sample=s
+
+echo "Start adding read groups t : ", `date`
+${gatk}/gatk --java-options "-Xmx16G -Djava.io.tmpdir=${ODIR}/gatk_tmp" \
+AddOrReplaceReadGroups \
+-I ${ODIR}/bam/${sample}.tmp.bam \
+-O ${ODIR}/bam/${sample}.bam \
+RGID=${sample} \
+RGLB=${sample} \
+RGPL=ILLUMINA \
+RGPU=DKDL202001359 \
+RGSM=${sample} \
+RGCN=Novogen \
+RGPM=NovaSeq
+
 samtools index ${ODIR}/bam/${sample}.bam
+
+rm ${ODIR}/bam/${sample}.tmp.bam
+rm ${ODIR}/bam/${sample}.tmp.bam.bai
+
 
 echo "Start pileup at : ", `date`
 
