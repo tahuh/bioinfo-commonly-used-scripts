@@ -89,13 +89,13 @@ ${gatk}/gatk --java-options "-Xmx4G -XX:ParallelGCThreads=4 -Djava.io.tmpdir=${O
 AddOrReplaceReadGroups \
 -I /dev/stdin \
 -O /dev/stdout \
-RGID=${s} \
-RGLB=${s} \
-RGPL=ILLUMINA \
-RGPU=SomePlatFormUnit \
-RGSM=${s} \
-RGCN=SomeSequencingCenter \
-RGPM=SomeSequencingMachineName | \
+--RGID ${s} \
+--RGLB ${s} \
+--RGPL ILLUMINA \
+--RGPU SomePlatFormUnit \
+--RGSM ${s} \
+--RGCN SomeSequencingCenter \
+--RGPM SomeSequencingMachineName | \
 ${gatk}/gatk --java-options "-Xmx4G -XX:ParallelGCThreads=4 -Djava.io.tmpdir=${ODIR}/gatk_tmp" \
 SortSam \
 -I /dev/stdin \
